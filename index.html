@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genuine A4 Bill Maker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;700&family=Times+New+Roman&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .layout-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 420px;
+            background-color: #fff;
+            border-right: 1px solid #cbd5e1;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .preview-area {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: #525659;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* A4 Paper Dimensions */
+        .a4-paper {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 15mm;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            color: #000;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+
+        .min-h-table {
+            min-height: 140mm;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .empty-cell {
+            color: transparent;
+            user-select: none;
+        }
+
+        /* =========================================================
+           1. Yellow Cash Bill (Kwality Style)
+           ========================================================= */
+        .tpl-yellow {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #fdfae7;
+        }
+
+        .tpl-yellow .top-header {
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .tpl-yellow .shop-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .tpl-yellow .sub-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: -5px;
+        }
+
+        .tpl-yellow .cash-bill-box {
+            border: 2px solid #000;
+            display: inline-block;
+            padding: 2px 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .tpl-yellow table {
+            margin-top: 15px;
+            border: 1px solid #000;
+        }
+
+        .tpl-yellow th,
+        .tpl-yellow td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .tpl-yellow th {
+            border-bottom: 2px solid #000;
+            font-size: 0.95rem;
+        }
+
+        .tpl-yellow .input-font {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* Computer printed feel */
+
+        /* =========================================================
+           2. White Retail Bill (Baker's Inn Style)
+           ========================================================= */
+        .tpl-white {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tpl-white .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .tpl-white .cash-bill-box {
+            background: #000;
+            color: #fff;
+            display: inline-block;
+            padding: 4px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .tpl-white table {
+            margin-top: 20px;
+            border: 2px solid #000;
+        }
+
+        .tpl-white th,
+        .tpl-white td {
+            border: 1px solid #000;
+            padding: 6px;
+        }
+
+        .tpl-white th {
+            background-color: #f8f9fa;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .tpl-white .amt-header {
+            display: flex;
+            border-top: 1px solid #000;
+            margin-top: 3px;
+            padding-top: 3px;
+        }
+
+        .tpl-white .amt-header div,
+        .tpl-white .amt-values div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .tpl-white .amt-header div:first-child,
+        .tpl-white .amt-values div:first-child {
+            border-right: 1px solid #000;
+            flex: 2;
+        }
+
+        .tpl-white .amt-values {
+            display: flex;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .tpl-white .declaration-box {
+            border: 2px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* =========================================================
+           3. Simple Computerized Tax Invoice (Tally Style)
+           ========================================================= */
+        .tpl-tally {
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #000;
+            padding: 10mm;
+        }
+
+        .tpl-tally .header-section {
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tpl-tally table {
+            border: 1px solid #000;
+        }
+
+        .tpl-tally th {
+            border: 1px solid #000;
+            padding: 8px;
+            background: #f1f1f1;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .tpl-tally td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 8px;
+        }
+
+        .tpl-tally .totals-row {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           4. Classic Dot Matrix / Wholesale
+           ========================================================= */
+        .tpl-dot {
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .tpl-dot .title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .tpl-dot .divider {
+            border-bottom: 1px dashed #000;
+            margin: 15px 0;
+        }
+
+        .tpl-dot th {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 8px 0;
+            text-align: left;
+        }
+
+        .tpl-dot td {
+            padding: 8px 0;
+        }
+
+        .tpl-dot .total-line {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 10px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* =========================================================
+           5. Standard Minimal Receipt
+           ========================================================= */
+        .tpl-basic {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tpl-basic .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .tpl-basic th {
+            border-bottom: 2px solid #000;
+            padding: 10px 5px;
+            text-align: left;
+        }
+
+        .tpl-basic td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 5px;
+        }
+
+        /* =========================================================
+           6. Simple Grid Invoice
+           ========================================================= */
+        .tpl-grid {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tpl-grid .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: #000;
+            color: #fff;
+            padding: 5px 15px;
+            display: inline-block;
+        }
+
+        .tpl-grid table {
+            border: 2px solid #000;
+        }
+
+        .tpl-grid th {
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+
+        .tpl-grid td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .preview-area {
+                padding: 0;
+                background: transparent;
+                display: block;
+            }
+
+            .a4-paper {
+                box-shadow: none;
+                margin: 0;
+                padding: 15mm;
+                width: 100%;
+                min-height: 297mm;
+            }
+
+            .tpl-yellow {
+                background-color: #fff !important;
+            }
+
+            /* Saves ink */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout-container">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 class="mb-4 fw-bold text-dark border-bottom pb-2">Simple Bill Maker</h4>
+
+            <button class="btn btn-primary w-100 mb-4 fw-bold shadow-sm" onclick="window.print()">🖨️ Print
+                Bill</button>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold text-secondary small text-uppercase">Select Template</label>
+                <select class="form-select border-primary" id="templateSelect" onchange="updateBill()">
+                    <option value="tpl-yellow">1. Yellow Cash Bill (Pad Style)</option>
+                    <option value="tpl-white">2. White Rs/Ps Bill (Pad Style)</option>
+                    <option value="tpl-tally">3. Simple Computerized (Tally Style)</option>
+                    <option value="tpl-dot">4. Classic Dot Matrix / Wholesale</option>
+                    <option value="tpl-basic">5. Standard Minimal Receipt</option>
+                    <option value="tpl-grid">6. Simple Grid Invoice</option>
+                </select>
+            </div>
+
+            <h6 class="fw-bold text-secondary mt-4">Header Details</h6>
+            <input type="text" id="shopName" class="form-control form-control-sm mb-2" placeholder="Shop/Business Name"
+                oninput="updateBill()">
+            <input type="text" id="shopSub" class="form-control form-control-sm mb-2" placeholder="Subtitle / Tagline"
+                oninput="updateBill()">
+            <textarea id="shopAddress" class="form-control form-control-sm mb-2" rows="2" placeholder="Address"
+                oninput="updateBill()"></textarea>
+            <input type="text" id="shopPhone" class="form-control form-control-sm mb-2" placeholder="Phone Numbers"
+                oninput="updateBill()">
+            <textarea id="taxRules" class="form-control form-control-sm mb-3" rows="2"
+                placeholder="Tax No / Bank Details / Rules" oninput="updateBill()"></textarea>
+
+            <h6 class="fw-bold text-secondary mt-4">Bill Details</h6>
+            <div class="row g-2 mb-2">
+                <div class="col-6"><input type="text" id="billNo" class="form-control form-control-sm"
+                        placeholder="Bill No." oninput="updateBill()"></div>
+                <div class="col-6"><input type="date" id="billDate" class="form-control form-control-sm"
+                        oninput="updateBill()"></div>
+            </div>
+            <input type="text" id="customerName" class="form-control form-control-sm mb-3" placeholder="Customer Name"
+                oninput="updateBill()">
+
+            <h6 class="fw-bold text-secondary mt-4">Items</h6>
+            <div id="itemsContainer" class="mb-3"></div>
+            <button class="btn btn-outline-secondary btn-sm w-100 mb-4" onclick="addItem()">+ Add Empty Row</button>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-area">
+            <div id="billPreview" class="a4-paper tpl-yellow">
+                <!-- Dynamic Template Injected Here -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Start completely blank
+        let items = [
+            { name: "", tax: "", qty: "", rate: "" },
+            { name: "", tax: "", qty: "", rate: "" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("billDate").value = new Date().toISOString().split('T')[0];
+            renderItemsForm();
+            updateBill();
+        });
+
+        function renderItemsForm() {
+            const container = document.getElementById("itemsContainer");
+            container.innerHTML = "";
+
+            items.forEach((item, index) => {
+                container.innerHTML += `
+                <div class="card p-2 mb-2 bg-light border-0 shadow-sm">
+                    <div class="row g-1">
+                        <div class="col-12 mb-1"><input type="text" class="form-control form-control-sm" placeholder="Item Name" value="${item.name}" oninput="updateItem(${index}, 'name', this.value)"></div>
+                        <div class="col-3"><input type="text" class="form-control form-control-sm" placeholder="Tax/GST" value="${item.tax}" oninput="updateItem(${index}, 'tax', this.value)"></div>
+                        <div class="col-3"><input type="number" class="form-control form-control-sm" placeholder="Qty" value="${item.qty}" oninput="updateItem(${index}, 'qty', this.value)"></div>
+                        <div class="col-3"><input type="number" class="form-control form-control-sm" placeholder="Rate" value="${item.rate}" oninput="updateItem(${index}, 'rate', this.value)"></div>
+                        <div class="col-3"><button class="btn btn-danger btn-sm w-100" onclick="removeItem(${index})">X</button></div>
+                    </div>
+                </div>
+            `;
+            });
+        }
+
+        function addItem() {
+            items.push({ name: "", tax: "", qty: "", rate: "" });
+            renderItemsForm();
+            updateBill();
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItemsForm();
+            updateBill();
+        }
+
+        function updateItem(index, field, value) {
+            items[index][field] = value;
+            updateBill();
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            const parts = dateStr.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dateStr;
+        }
+
+        function updateBill() {
+            const tpl = document.getElementById("templateSelect").value;
+            const container = document.getElementById("billPreview");
+            container.className = `a4-paper ${tpl}`;
+
+            const data = {
+                shopName: document.getElementById("shopName").value || "\u00A0",
+                shopSub: document.getElementById("shopSub").value || "\u00A0",
+                address: document.getElementById("shopAddress").value.replace(/\n/g, '<br>') || "\u00A0",
+                phone: document.getElementById("shopPhone").value.replace(/\n/g, '<br>') || "\u00A0",
+                taxRules: document.getElementById("taxRules").value.replace(/\n/g, '<br>') || "\u00A0",
+                billNo: document.getElementById("billNo").value || "\u00A0",
+                date: formatDate(document.getElementById("billDate").value) || "\u00A0",
+                customer: document.getElementById("customerName").value || "\u00A0",
+                total: 0
+            };
+
+            let html = "";
+            let rows = "";
+
+            // Common Item Parsing Logic
+            let parsedItems = items.map(item => {
+                let q = parseFloat(item.qty) || 0;
+                let r = parseFloat(item.rate) || 0;
+                let amt = q * r;
+                data.total += amt;
+                return { name: item.name, tax: item.tax, qty: item.qty, rate: item.rate, amt: amt };
+            });
+
+            // ==========================================
+            // 1. YELLOW CASH BILL (PAD STYLE)
+            // ==========================================
+            if (tpl === 'tpl-yellow') {
+                for (let i = 0; i < 15; i++) {
+                    let itm = parsedItems[i];
+                    if (itm && itm.name) {
+                        rows += `<tr class="input-font">
+                        <td>${i + 1}</td>
+                        <td style="text-align:left;">${itm.name}</td>
+                        <td>${itm.tax || ''}</td>
+                        <td>${itm.qty || ''}</td>
+                        <td>${itm.rate ? parseFloat(itm.rate).toFixed(2) : ''}</td>
+                        <td><b>${itm.amt ? itm.amt.toFixed(2) : ''}</b></td>
+                    </tr>`;
+                    } else {
+                        rows += `<tr><td class="empty-cell">-</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+                    }
+                }
+
+                html = `
+                <div class="top-header">
+                    ${data.address}<br>
+                    <small style="font-weight:normal;">${data.taxRules}</small><br>
+                    ${data.phone}
+                </div>
+                <div class="text-center">
+                    <h1 class="shop-title">${data.shopName}</h1>
+                    <h2 class="sub-title">${data.shopSub}</h2>
+                    <div class="cash-bill-box">CASH BILL</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-end mt-2 mb-2">
+                    <div><strong>No.</strong> <span class="input-font ps-2">${data.billNo}</span></div>
+                    <div><strong>Date</strong> <span class="input-font ps-2">${data.date}</span></div>
+                </div>
+                <div class="mb-3"><strong>Name / Address:</strong> <span class="input-font ps-2">${data.customer}</span></div>
+
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="8%">Sl.<br>No.</th>
+                                <th width="40%">Commodity</th>
+                                <th width="12%">Rate<br>of Tax</th>
+                                <th width="10%">Qty.</th>
+                                <th width="15%">Rate</th>
+                                <th width="15%">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3" style="border: 1px solid #000; padding: 10px;">
+                    <div></div>
+                    <div>
+                        <strong style="font-size: 1.1rem;">TOTAL</strong> 
+                        <span class="ms-3 input-font" style="font-size: 1.3rem; font-weight:bold;">${data.total.toFixed(2)}</span>
+                    </div>
+                </div>
+                <div class="text-end mt-2"><em>Authorised Signatory</em></div>
+            `;
+            }
+
+            // ==========================================
+            // 2. WHITE RS/PS BILL (PAD STYLE)
+            // ==========================================
+            else if (tpl === 'tpl-white') {
+                for (let i = 0; i < 15; i++) {
+                    let itm = parsedItems[i];
+                    if (itm && itm.name) {
+                        let rs = itm.amt ? Math.floor(itm.amt) : '';
+                        let ps = itm.amt ? Math.round((itm.amt % 1) * 100) : '';
+                        if (ps === 0 && itm.amt) ps = '-';
+                        rows += `<tr>
+                        <td class="text-center">${i + 1}</td>
+                        <td style="text-align:left;">${itm.name}</td>
+                        <td class="text-center">${itm.qty || ''}</td>
+                        <td style="padding:0;">
+                            <div class="amt-values">
+                                <div style="padding:6px;">${rs}</div>
+                                <div style="padding:6px;">${ps}</div>
+                            </div>
+                        </td>
+                    </tr>`;
+                    } else {
+                        rows += `<tr><td class="empty-cell">-</td><td></td><td></td><td style="padding:0;"><div class="amt-values"><div style="padding:6px;"></div><div style="padding:6px;"></div></div></td></tr>`;
+                    }
+                }
+                let totalRs = data.total ? Math.floor(data.total) : '';
+                let totalPs = data.total ? Math.round((data.total % 1) * 100) : '';
+                if (totalPs === 0 && data.total) totalPs = '-';
+
+                html = `
+                <div class="text-center">
+                    <h1 class="main-title">${data.shopName}</h1>
+                    <div class="fw-bold mt-2" style="font-size: 1.1rem; line-height: 1.4;">
+                        ${data.address}<br>
+                        ${data.phone}<br>
+                        <div class="cash-bill-box">CASH BILL</div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between fw-bold mb-2 mt-3" style="font-size: 1rem;">
+                    <div>No. <span>${data.billNo}</span></div>
+                    <div>Date: <span>${data.date}</span></div>
+                </div>
+                <div class="mb-3 fw-bold" style="font-size: 1rem;">To: <span>${data.customer}</span></div>
+
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="8%">Sl.<br>No.</th>
+                                <th width="50%">Particulars</th>
+                                <th width="15%">Qty.</th>
+                                <th width="27%" style="padding:0; padding-top:4px;">
+                                    Amount
+                                    <div class="amt-header">
+                                        <div>Rs.</div><div>Ps.</div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-center">TOTAL AMOUNT</th>
+                                <th style="padding:0;">
+                                    <div class="amt-values fw-bold" style="font-size:1.1rem;">
+                                        <div style="padding:6px;">${totalRs}</div>
+                                        <div style="padding:6px;">${totalPs}</div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="declaration-box">
+                    Declaration<br>Certified that particulars given above are true and correct<br>
+                    <div class="mt-1 fw-bold">${data.taxRules}</div>
+                </div>
+                <div class="mt-4 text-end pe-5">
+                    For ${data.shopName}<br><br><br>
+                    Authorised Signatory
+                </div>
+            `;
+            }
+
+            // ==========================================
+            // 3. SIMPLE COMPUTERIZED (TALLY STYLE)
+            // ==========================================
+            else if (tpl === 'tpl-tally') {
+                for (let i = 0; i < 15; i++) {
+                    let itm = parsedItems[i];
+                    if (itm && itm.name) {
+                        rows += `<tr>
+                        <td class="text-center">${i + 1}</td>
+                        <td>${itm.name}</td>
+                        <td class="text-center">${itm.qty || ''}</td>
+                        <td class="text-end">${itm.rate ? parseFloat(itm.rate).toFixed(2) : ''}</td>
+                        <td class="text-end">${itm.amt ? itm.amt.toFixed(2) : ''}</td>
+                    </tr>`;
+                    } else {
+                        rows += `<tr><td class="empty-cell">-</td><td></td><td></td><td></td><td></td></tr>`;
+                    }
+                }
+                html = `
+                <div class="header-section text-center">
+                    <h2 class="fw-bold m-0">${data.shopName}</h2>
+                    <p class="m-0">${data.address}</p>
+                    <p class="m-0">${data.phone}</p>
+                    <p class="m-0">${data.taxRules}</p>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <strong>Buyer:</strong><br>
+                        ${data.customer}
+                    </div>
+                    <div class="col-6 text-end">
+                        <strong>Invoice No:</strong> ${data.billNo}<br>
+                        <strong>Date:</strong> ${data.date}
+                    </div>
+                </div>
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">Sl</th>
+                                <th width="50%">Description of Goods</th>
+                                <th width="10%">Quantity</th>
+                                <th width="15%">Rate</th>
+                                <th width="20%">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td colspan="4" class="text-end pe-3">Total</td>
+                                <td class="text-end">${data.total.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="mt-4 text-end">
+                    For ${data.shopName}<br><br><br>Authorised Signatory
+                </div>
+            `;
+            }
+
+            // ==========================================
+            // 4. DOT MATRIX / WHOLESALE
+            // ==========================================
+            else if (tpl === 'tpl-dot') {
+                parsedItems.forEach((itm, i) => {
+                    if (itm.name) {
+                        rows += `<tr>
+                        <td>${i + 1}</td>
+                        <td>${itm.name}</td>
+                        <td class="text-center">${itm.qty || '-'}</td>
+                        <td class="text-end">${itm.rate ? parseFloat(itm.rate).toFixed(2) : '-'}</td>
+                        <td class="text-end">${itm.amt ? itm.amt.toFixed(2) : '-'}</td>
+                    </tr>`;
+                    }
+                });
+                html = `
+                <div class="title">${data.shopName}</div>
+                <div class="text-center">${data.shopSub}</div>
+                <div class="text-center">${data.address} | ${data.phone}</div>
+                <div class="text-center">${data.taxRules}</div>
+                <div class="divider"></div>
+                <div class="d-flex justify-content-between">
+                    <div>BILL NO: ${data.billNo}</div>
+                    <div>DATE: ${data.date}</div>
+                </div>
+                <div class="mt-2">CUSTOMER: ${data.customer}</div>
+                <div class="divider"></div>
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">SL</th>
+                                <th width="45%">ITEM</th>
+                                <th width="15%" class="text-center">QTY</th>
+                                <th width="15%" class="text-end">RATE</th>
+                                <th width="20%" class="text-end">AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                <div class="total-line d-flex justify-content-between mt-4">
+                    <span>GRAND TOTAL</span>
+                    <span>${data.total.toFixed(2)}</span>
+                </div>
+                <div class="text-center mt-5"><small>COMPUTER GENERATED INVOICE</small></div>
+            `;
+            }
+
+            // ==========================================
+            // 5. STANDARD MINIMAL RECEIPT
+            // ==========================================
+            else if (tpl === 'tpl-basic') {
+                parsedItems.forEach(itm => {
+                    if (itm.name) {
+                        rows += `<tr>
+                        <td>${itm.name}</td>
+                        <td class="text-center">${itm.qty || ''}</td>
+                        <td class="text-end">${itm.rate ? parseFloat(itm.rate).toFixed(2) : ''}</td>
+                        <td class="text-end">${itm.amt ? itm.amt.toFixed(2) : ''}</td>
+                    </tr>`;
+                    }
+                });
+                html = `
+                <div class="d-flex justify-content-between align-items-start mb-5">
+                    <div>
+                        <div class="title">${data.shopName}</div>
+                        <div class="mt-1">${data.address}<br>${data.phone}</div>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="m-0 text-muted">INVOICE</h4>
+                        <div class="mt-2"># ${data.billNo}<br>${data.date}</div>
+                    </div>
+                </div>
+                <div class="mb-4 border-bottom pb-3">
+                    <strong class="text-muted">BILL TO:</strong><br>
+                    <span class="fs-5">${data.customer}</span>
+                </div>
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="50%">Description</th>
+                                <th width="15%" class="text-center">Qty</th>
+                                <th width="15%" class="text-end">Price</th>
+                                <th width="20%" class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <div class="d-flex justify-content-between border-top border-bottom border-2 border-dark py-2" style="width: 40%;">
+                        <h5 class="m-0">Total</h5>
+                        <h5 class="m-0 fw-bold">${data.total.toFixed(2)}</h5>
+                    </div>
+                </div>
+            `;
+            }
+
+            // ==========================================
+            // 6. SIMPLE GRID INVOICE
+            // ==========================================
+            else if (tpl === 'tpl-grid') {
+                for (let i = 0; i < 15; i++) {
+                    let itm = parsedItems[i];
+                    if (itm && itm.name) {
+                        rows += `<tr>
+                        <td class="text-center">${i + 1}</td>
+                        <td>${itm.name}</td>
+                        <td class="text-center">${itm.qty || ''}</td>
+                        <td class="text-end">${itm.rate ? parseFloat(itm.rate).toFixed(2) : ''}</td>
+                        <td class="text-end fw-bold">${itm.amt ? itm.amt.toFixed(2) : ''}</td>
+                    </tr>`;
+                    } else {
+                        rows += `<tr><td class="empty-cell">-</td><td></td><td></td><td></td><td></td></tr>`;
+                    }
+                }
+                html = `
+                <div class="text-center mb-3"><div class="title">${data.shopName}</div></div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong>From:</strong><br>${data.address}<br>${data.phone}<br>${data.taxRules}
+                    </div>
+                    <div class="col-6">
+                        <strong>To:</strong><br>${data.customer}<br><br>
+                        <strong>Inv No:</strong> ${data.billNo} | <strong>Date:</strong> ${data.date}
+                    </div>
+                </div>
+                <div class="min-h-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">Sl</th>
+                                <th width="50%">Particulars</th>
+                                <th width="10%" class="text-center">Qty</th>
+                                <th width="15%" class="text-end">Rate</th>
+                                <th width="20%" class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-end fw-bold">TOTAL</td>
+                                <td class="text-end fw-bold fs-5">${data.total.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="mt-4 text-end">Signature</div>
+            `;
+            }
+
+            container.innerHTML = html;
+        }
+    </script>
+
+</body>
+
+</html>
